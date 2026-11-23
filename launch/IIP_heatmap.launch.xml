@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="strain_in" default="/iip_strain"/>
+  <arg name="heatmap_out" default="/strain_3d_heatmap"/>
+  <arg name="frame_id" default="IIP"/>
+  <arg name="calibration_duration" default="2.0"/>
+  <arg name="vmax" default="500.0"/>
+  <arg name="alpha" default="0.7"/>
+  <arg name="grid_res" default="50"/>
+  <arg name="num_layers" default="20"/>
+  <arg name="publish_rate" default="15.0"/>
+  <arg name="render_style" default="points"/>
+  <arg name="show_phantom_body" default="true"/>
+  <arg name="phantom_alpha" default="0.7"/>
+  <arg name="phantom_thickness" default="0.01"/>
+  <arg name="phantom_center_x" default="0.0"/>
+  <arg name="phantom_center_y" default="0.0"/>
+  <arg name="phantom_center_z" default="-0.005"/>
+  <arg name="start_rviz" default="true"/>
+  <arg name="start_rqt_rviz" default="false"/>
+
+  <node pkg="invasiveness_evaluation_skin"
+        exec="iip_strain_heatmap.py"
+        name="strain_3d_heatmap_publisher"
+        output="screen">
+    <param name="strain_in" value="$(var strain_in)"/>
+    <param name="heatmap_out" value="$(var heatmap_out)"/>
+    <param name="frame_id" value="$(var frame_id)"/>
+    <param name="calibration_duration" value="$(var calibration_duration)"/>
+    <param name="vmax" value="$(var vmax)"/>
+    <param name="alpha" value="$(var alpha)"/>
+    <param name="grid_res" value="$(var grid_res)"/>
+    <param name="num_layers" value="$(var num_layers)"/>
+    <param name="publish_rate" value="$(var publish_rate)"/>
+    <param name="render_style" value="$(var render_style)"/>
+    <param name="show_phantom_body" value="$(var show_phantom_body)"/>
+    <param name="phantom_alpha" value="$(var phantom_alpha)"/>
+    <param name="phantom_thickness" value="$(var phantom_thickness)"/>
+    <param name="phantom_center_x" value="$(var phantom_center_x)"/>
+    <param name="phantom_center_y" value="$(var phantom_center_y)"/>
+    <param name="phantom_center_z" value="$(var phantom_center_z)"/>
+  </node>
+
+  <node pkg="rviz2"
+        exec="rviz2"
+        name="iip_heatmap_rviz"
+        output="screen"
+        if="$(var start_rviz)"
+        args="-d $(find-pkg-share invasiveness_evaluation_skin)/config/iip_heatmap.rviz"/>
+
+  <node pkg="rqt_gui"
+        exec="rqt_gui"
+        name="iip_heatmap_rqt_rviz"
+        output="screen"
+        if="$(var start_rqt_rviz)"
+        args="--standalone rqt_rviz"/>
+</launch>

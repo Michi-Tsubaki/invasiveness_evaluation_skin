@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="strain_in" default="/iip_strain"/>
+  <arg name="marker_out" default="/iip_pain/markers"/>
+  <arg name="global_out" default="/iip_pain/global_values"/>
+  <arg name="local_out" default="/iip_pain/local_values"/>
+  <arg name="heatmap_out" default="/strain_3d_heatmap"/>
+  <arg name="frame_id" default="IIP"/>
+  <arg name="mode" default="both"/>
+  <arg name="baseline_mode" default="zero"/>
+  <arg name="calibration_duration" default="2.0"/>
+  <arg name="vmax" default="2500.0"/>
+  <arg name="publish_rate" default="20.0"/>
+  <arg name="height_scale" default="0.025"/>
+  <arg name="use_depth_gradient" default="false"/>
+  <arg name="start_heatmap" default="true"/>
+  <arg name="heatmap_vmax" default="500.0"/>
+  <arg name="heatmap_alpha" default="0.7"/>
+  <arg name="heatmap_grid_res" default="50"/>
+  <arg name="heatmap_num_layers" default="20"/>
+  <arg name="heatmap_publish_rate" default="15.0"/>
+  <arg name="heatmap_render_style" default="points"/>
+  <arg name="show_phantom_body" default="true"/>
+  <arg name="phantom_alpha" default="0.7"/>
+  <arg name="phantom_thickness" default="0.01"/>
+  <arg name="phantom_center_x" default="0.0"/>
+  <arg name="phantom_center_y" default="0.0"/>
+  <arg name="phantom_center_z" default="-0.005"/>
+  <arg name="start_rviz" default="true"/>
+  <arg name="start_rqt_plot" default="false"/>
+
+  <node pkg="invasiveness_evaluation_skin"
+        exec="iip_strain_heatmap.py"
+        name="strain_3d_heatmap_publisher"
+        output="screen"
+        if="$(var start_heatmap)">
+    <param name="strain_in" value="$(var strain_in)"/>
+    <param name="heatmap_out" value="$(var heatmap_out)"/>
+    <param name="frame_id" value="$(var frame_id)"/>
+    <param name="calibration_duration" value="$(var calibration_duration)"/>
+    <param name="vmax" value="$(var heatmap_vmax)"/>
+    <param name="alpha" value="$(var heatmap_alpha)"/>
+    <param name="grid_res" value="$(var heatmap_grid_res)"/>
+    <param name="num_layers" value="$(var heatmap_num_layers)"/>
+    <param name="publish_rate" value="$(var heatmap_publish_rate)"/>
+    <param name="render_style" value="$(var heatmap_render_style)"/>
+    <param name="show_phantom_body" value="$(var show_phantom_body)"/>
+    <param name="phantom_alpha" value="$(var phantom_alpha)"/>
+    <param name="phantom_thickness" value="$(var phantom_thickness)"/>
+    <param name="phantom_center_x" value="$(var phantom_center_x)"/>
+    <param name="phantom_center_y" value="$(var phantom_center_y)"/>
+    <param name="phantom_center_z" value="$(var phantom_center_z)"/>
+  </node>
+
+  <node pkg="invasiveness_evaluation_skin"
+        exec="iip_pain_visualizer.py"
+        name="iip_pain_arrows"
+        output="screen">
+    <param name="strain_in" value="$(var strain_in)"/>
+    <param name="marker_out" value="$(var marker_out)"/>
+    <param name="global_out" value="$(var global_out)"/>
+    <param name="local_out" value="$(var local_out)"/>
+    <param name="frame_id" value="$(var frame_id)"/>
+    <param name="mode" value="$(var mode)"/>
+    <param name="baseline_mode" value="$(var baseline_mode)"/>
+    <param name="calibration_duration" value="$(var calibration_duration)"/>
+    <param name="vmax" value="$(var vmax)"/>
+    <param name="publish_rate" value="$(var publish_rate)"/>
+    <param name="height_scale" value="$(var height_scale)"/>
+    <param name="use_depth_gradient" value="$(var use_depth_gradient)"/>
+  </node>
+
+  <node pkg="rviz2"
+        exec="rviz2"
+        name="iip_pain_arrows_rviz"
+        output="screen"
+        if="$(var start_rviz)"
+        args="-d $(find-pkg-share invasiveness_evaluation_skin)/config/iip_pain_arrows.rviz"/>
+
+  <node pkg="rqt_plot"
+        exec="rqt_plot"
+        name="iip_pain_rqt_plot"
+        output="screen"
+        if="$(var start_rqt_plot)"
+        args="/iip_pain/global_values/data[0] /iip_pain/global_values/data[1] /iip_pain/global_values/data[2] /iip_pain/local_values/data[0] /iip_pain/local_values/data[1] /iip_pain/local_values/data[2] /iip_pain/local_values/data[3] /iip_pain/local_values/data[4] /iip_pain/local_values/data[5]"/>
+</launch>

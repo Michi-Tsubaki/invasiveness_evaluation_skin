@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="strain_in" default="/iip_strain"/>
+  <arg name="marker_out" default="/iip_pain/markers"/>
+  <arg name="global_out" default="/iip_pain/global_values"/>
+  <arg name="local_out" default="/iip_pain/local_values"/>
+  <arg name="frame_id" default="IIP"/>
+  <arg name="mode" default="both"/>
+  <arg name="baseline_mode" default="zero"/>
+  <arg name="calibration_duration" default="2.0"/>
+  <arg name="vmax" default="2500.0"/>
+  <arg name="publish_rate" default="20.0"/>
+  <arg name="height_scale" default="0.025"/>
+  <arg name="use_depth_gradient" default="false"/>
+  <arg name="start_pain_node" default="true"/>
+  <arg name="start_rqt_plot" default="true"/>
+
+  <node pkg="invasiveness_evaluation_skin"
+        exec="iip_pain_visualizer.py"
+        name="iip_pain_plot_data"
+        output="screen"
+        if="$(var start_pain_node)">
+    <param name="strain_in" value="$(var strain_in)"/>
+    <param name="marker_out" value="$(var marker_out)"/>
+    <param name="global_out" value="$(var global_out)"/>
+    <param name="local_out" value="$(var local_out)"/>
+    <param name="frame_id" value="$(var frame_id)"/>
+    <param name="mode" value="$(var mode)"/>
+    <param name="baseline_mode" value="$(var baseline_mode)"/>
+    <param name="calibration_duration" value="$(var calibration_duration)"/>
+    <param name="vmax" value="$(var vmax)"/>
+    <param name="publish_rate" value="$(var publish_rate)"/>
+    <param name="height_scale" value="$(var height_scale)"/>
+    <param name="use_depth_gradient" value="$(var use_depth_gradient)"/>
+  </node>
+
+  <node pkg="rqt_plot"
+        exec="rqt_plot"
+        name="iip_pain_rqt_plot"
+        output="screen"
+        if="$(var start_rqt_plot)"
+        args="/iip_pain/global_values/data[0] /iip_pain/global_values/data[1] /iip_pain/global_values/data[2] /iip_pain/local_values/data[0] /iip_pain/local_values/data[1] /iip_pain/local_values/data[2] /iip_pain/local_values/data[3] /iip_pain/local_values/data[4] /iip_pain/local_values/data[5]"/>
+</launch>
