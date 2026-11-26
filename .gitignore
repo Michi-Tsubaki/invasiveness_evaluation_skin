@@ -25,3 +25,4 @@
 !/scripts/iip_pain_visualizer.py
 !/scripts/iip_publisher.py
 !/scripts/iip_serial_publisher.py
+!/public_data/*
